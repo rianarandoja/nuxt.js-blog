@@ -3,11 +3,17 @@
     <section class="intro">
       <h2>Such awesome tech blog!</h2>
     </section>
+    <PostList/>
   </div>  
 </template>
 
 <script>
-export default {}
+import PostList from '@/components/Posts/PostList'
+export default {
+  components: {
+    PostList
+  }
+}
 </script>
 
 <style scoped  lang="scss">
