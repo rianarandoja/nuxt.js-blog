@@ -10,7 +10,12 @@ export default {
   components: {
     PostList
   },
-  asyncData(context) {
+  fetch(context) {
+    if (context.store.state.loadedPosts.length > 0) {
+      // data already in store
+      // no need to fetch
+      return null
+    }
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         resolve({
@@ -37,11 +42,16 @@ export default {
       }, 1000)
     })
       .then(data => {
-        return data
+        context.store.commit('setPosts', data.loadedPosts)
       })
       .catch(err => {
         context.error(err)
       })
+  },
+  computed: {
+    loadedPosts() {
+      return this.$store.getters.loadedPosts
+    }
   }
 }
 </script>
