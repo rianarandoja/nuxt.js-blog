@@ -13,36 +13,10 @@ export default {
   components: {
     PostList
   },
-  asyncData(context, callback) {
-    // renders in server side
-    // sends whole page through once loaded
-    // runs only on first load
-    // just navigating around doesn't call the server
-    setTimeout(() => {
-      callback(null, {
-        loadedPosts: [
-          {
-            id: '0',
-            title: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-            thumbnail:
-              'https://cdn.pixabay.com/photo/2015/11/04/20/59/milky-way-1023340_1280.jpg',
-            previewText:
-              'Mauris interdum, ante sit amet dapibus efficitur, enim nunc pulvinar nisi, eu suscipit justo justo quis risus.'
-          },
-          {
-            id: '1',
-            title: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-            thumbnail:
-              'https://cdn.pixabay.com/photo/2015/11/04/20/59/milky-way-1023340_1280.jpg',
-            previewText:
-              'Mauris interdum, ante sit amet dapibus efficitur, enim nunc pulvinar nisi, eu suscipit justo justo quis risus.'
-          }
-        ]
-      })
-    }, 1000)
-  },
-  created() {
-    this.$store.dispatch('setPosts', this.loadedPosts)
+  computed: {
+    loadedPosts() {
+      return this.$store.getters.loadedPosts
+    }
   }
 }
 </script>
