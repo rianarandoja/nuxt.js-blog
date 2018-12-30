@@ -1,13 +1,12 @@
 <template>
   <div class="single-post-page">
     <section class="post">
-      <h2 class="post-title">Pellentesque vel molestie nisi.</h2>
+      <h2 class="post-title">{{ loadedPost.title }}, id: {{ loadedPost.params_id }}</h2>
       <div class="post-details">
-        <div class="post-detail">Last updated on 29.12.2019</div>
-        <div class="post-detail">Written by Riana Randoja</div>
+        <div class="post-detail">Last updated on {{ loadedPost.updatedDate }}</div>
+        <div class="post-detail">Written by {{ loadedPost.author }}</div>
       </div>
-      <p class="post-content">Phasellus lacinia lobortis ligula, non bibendum ligula tempus et. Sed eget lacus urna. Phasellus lacinia lobortis ligula, non bibendum ligula tempus et. Sed eget lacus urna. Quisque non semper enim. Fusce rutrum ipsum at metus pulvinar lobortis. Curabitur sodales auctor tortor, in fringilla lacus suscipit ac. Phasellus ultricies lectus in purus ornare, a laoreet erat cursus.</p>
-      <p class="post-content"> Donec nec nibh finibus erat consectetur pellentesque vitae nec sapien.</p>
+      <p class="post-content">{{ loadedPost.content }}</p>
     </section>
     <section class="post-feedback">
       <p>Email me at <a href="mailto:techblog@gmail.com">techblog@gmail.com</a></p>
@@ -16,7 +15,26 @@
 </template>
 
 <script>
-export default {}
+export default {
+  asyncData(context, callback) {
+    setTimeout(() => {
+      callback(null, {
+        loadedPost: {
+          id: '0',
+          title: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+          author: 'Riana',
+          updatedDate: new Date(),
+          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+          thumbnail:
+            'https://cdn.pixabay.com/photo/2015/11/04/20/59/milky-way-1023340_1280.jpg',
+          previewText:
+            'Mauris interdum, ante sit amet dapibus efficitur, enim nunc pulvinar nisi, eu suscipit justo justo quis risus.',
+          params_id: context.route.params.id
+        }
+      })
+    }, 1000)
+  }
+}
 </script>
 
 <style scoped lang="scss">
