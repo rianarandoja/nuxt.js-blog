@@ -2,7 +2,9 @@
   <div class="admin-page">
     <section class="existing-posts">
       <h2>Existing Posts</h2>
-      <PostList is-admin/>
+      <PostList 
+        :posts="loadedPosts" 
+        is-admin/>
     </section>
   </div>
 </template>
@@ -13,6 +15,11 @@ export default {
   layout: 'admin',
   components: {
     PostList
+  },
+  computed: {
+    loadedPosts() {
+      return this.$store.getters.loadedPosts
+    }
   }
 }
 </script>

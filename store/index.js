@@ -1,4 +1,5 @@
 import Vuex from 'vuex'
+import axios from 'axios'
 
 const createStore = () => {
   return new Vuex.Store({
@@ -8,38 +9,67 @@ const createStore = () => {
     mutations: {
       setPosts(state, posts) {
         state.loadedPosts = posts
+      },
+      addPost(state, post) {
+        state.loadedPosts.push(post)
+      },
+      editPost(state, editedPost) {
+        const postIndex = state.loadedPosts.findIndex(
+          post => post.id === editedPost.id
+        )
+        state.loadedPosts[postIndex] = editedPost
       }
     },
     actions: {
       nuxtServerInit(vuexContext, context) {
-        return new Promise((resolve, reject) => {
-          setTimeout(() => {
-            vuexContext.commit('setPosts', [
-              {
-                id: '2',
-                title:
-                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-                thumbnail:
-                  'https://cdn.pixabay.com/photo/2015/11/04/20/59/milky-way-1023340_1280.jpg',
-                previewText:
-                  'Mauris interdum, ante sit amet dapibus efficitur, enim nunc pulvinar nisi, eu suscipit justo justo quis risus.'
-              },
-              {
-                id: '3',
-                title:
-                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-                thumbnail:
-                  'https://cdn.pixabay.com/photo/2015/11/04/20/59/milky-way-1023340_1280.jpg',
-                previewText:
-                  'Mauris interdum, ante sit amet dapibus efficitur, enim nunc pulvinar nisi, eu suscipit justo justo quis risus.'
-              }
-            ])
-            resolve()
-          }, 1000)
-        })
+        return axios
+          .get('https://nuxt-blog-2914e.firebaseio.com/posts.json')
+          .then(result => {
+            const postsArray = []
+            for (const key in result.data) {
+              postsArray.push({ ...result.data[key], id: key })
+            }
+            vuexContext.commit('setPosts', postsArray)
+          })
+          .catch(err => context.error(err))
       },
       setPosts(vuexContext, posts) {
         vuexContext.commit('setPosts', posts)
+      },
+      addPost(vuexContext, post) {
+        const createdPost = {
+          ...post,
+          updatedDate: new Date()
+        }
+        return axios
+          .post(
+            'https://nuxt-blog-2914e.firebaseio.com/posts.json',
+            createdPost
+          )
+          .then(result => {
+            vuexContext.commit('addPost', {
+              ...createdPost,
+              id: result.data.name
+            })
+          })
+          .catch(err => console.log(err))
+      },
+      editPost(vuexContext, post) {
+        const editedPost = {
+          ...post,
+          updatedDate: new Date()
+        }
+        return axios
+          .put(
+            `https://nuxt-blog-2914e.firebaseio.com/posts/${
+              editedPost.id
+            }.json`,
+            editedPost
+          )
+          .then(result => {
+            vuexContext.commit('editPost', editedPost)
+          })
+          .catch(err => console.log(context.err))
       }
     },
     getters: {
