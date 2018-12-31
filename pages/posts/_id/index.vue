@@ -15,17 +15,13 @@
 </template>
 
 <script>
-import axios from 'axios'
-
 export default {
   asyncData(context) {
-    return axios
-      .get(
-        `https://nuxt-blog-2914e.firebaseio.com/posts/${context.params.id}.json`
-      )
-      .then(result => {
+    return context.app.$axios
+      .$get(`/posts/${context.params.id}.json`)
+      .then(data => {
         return {
-          loadedPost: { ...result.data, id: context.params.id }
+          loadedPost: { ...data, id: context.params.id }
         }
       })
       .catch(err => context.error(err))

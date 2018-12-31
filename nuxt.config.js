@@ -41,8 +41,14 @@ module.exports = {
   ** Nuxt.js modules
   */
   modules: [
+    '@nuxtjs/axios',
     ['nuxt-sass-resources-loader', ['@/assets/styles/_variables.scss']]
   ],
+
+  axios: {
+    baseURL: process.env.BASE_URL || 'https://nuxt-blog-2914e.firebaseio.com',
+    credentials: false
+  },
 
   /*
   ** Build configuration
@@ -62,9 +68,5 @@ module.exports = {
         })
       }
     }
-  },
-
-  env: {
-    baseUrl: process.env.BASE_URL || 'https://nuxt-blog-2914e.firebaseio.com'
   }
 }

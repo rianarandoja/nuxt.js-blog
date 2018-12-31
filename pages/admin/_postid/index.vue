@@ -9,7 +9,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import AdminPostForm from '@/components/Admin/AdminPostForm'
 
 export default {
@@ -18,11 +17,11 @@ export default {
     AdminPostForm
   },
   asyncData(context) {
-    return axios
-      .get(`${process.env.baseUrl}/posts/${context.params.postid}.json`)
-      .then(result => {
+    return context.app.$axios
+      .$get(`/posts/${context.params.postid}.json`)
+      .then(data => {
         return {
-          loadedPost: { ...result.data, id: context.params.postid }
+          loadedPost: { ...data, id: context.params.postid }
         }
       })
       .catch(err => context.error(err))
