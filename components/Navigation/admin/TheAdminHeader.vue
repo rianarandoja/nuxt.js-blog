@@ -8,12 +8,17 @@
       <div class="spacer"/>
       <div class="navigation-items">
         <ul class="nav-list">
-          <!-- <li class="nav-item"><AppButton @click="$router.push('/admin/new-post')">Create Post</AppButton></li> -->
-          <!-- TODO -->
-          <li class="nav-item"><nuxt-link to="/admin/new-post">New Post</nuxt-link></li>
+          <li 
+            v-if="loggedIn" 
+            class="nav-item"><nuxt-link to="/admin/new-post">New Post</nuxt-link></li>
           <li 
             id="white-link" 
             class="nav-item"><nuxt-link to="/">Client</nuxt-link></li>
+          <li 
+            v-if="loggedIn" 
+            class="nav-item"><AppButton 
+              btn-style="small" 
+              @click="onLogout">Logout</AppButton></li>
         </ul>
       </div>
     </header>
@@ -27,6 +32,17 @@ export default {
   name: 'TheHeader',
   components: {
     TheSideNavToggle
+  },
+  computed: {
+    loggedIn() {
+      return this.$store.getters.isAuthenticated
+    }
+  },
+  methods: {
+    onLogout() {
+      this.$store.dispatch('logout')
+      this.$router.push('/admin/auth')
+    }
   }
 }
 </script>

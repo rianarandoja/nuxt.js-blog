@@ -1,9 +1,11 @@
 import Vuex from 'vuex'
+import Cookie from 'js-cookie'
 
 const createStore = () => {
   return new Vuex.Store({
     state: {
-      loadedPosts: []
+      loadedPosts: [],
+      token: null
     },
     mutations: {
       setPosts(state, posts) {
@@ -17,6 +19,12 @@ const createStore = () => {
           post => post.id === editedPost.id
         )
         state.loadedPosts[postIndex] = editedPost
+      },
+      setToken(state, token) {
+        state.token = token
+      },
+      clearToken(state) {
+        state.token = null
       }
     },
     actions: {
@@ -41,7 +49,7 @@ const createStore = () => {
           updatedDate: new Date()
         }
         return this.$axios
-          .$post('/posts.json', createdPost)
+          .$post(`/posts.json?auth=${vuexContext.state.token}`, createdPost)
           .then(data => {
             vuexContext.commit('addPost', {
               ...createdPost,
@@ -56,16 +64,92 @@ const createStore = () => {
           updatedDate: new Date()
         }
         return this.$axios
-          .$put(`/posts/${editedPost.id}.json`, editedPost)
+          .$put(
+            `/posts/${editedPost.id}.json?auth=${vuexContext.state.token}`,
+            editedPost
+          )
           .then(result => {
             vuexContext.commit('editPost', editedPost)
           })
           .catch(err => console.log(context.err))
+      },
+      authenticateUser(vuexContext, authData) {
+        const credentials = {
+          email: authData.email,
+          password: authData.password,
+          returnSecureToken: true
+        }
+        let url =
+          'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key='
+        if (authData.isLogin) {
+          url =
+            'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key='
+        }
+        return this.$axios
+          .$post(`${url}${process.env.firebase_API_KEY}`, credentials)
+          .then(result => {
+            const expirationDate =
+              new Date().getTime() + Number.parseInt(result.expiresIn) * 1000
+            const token = result.idToken
+            vuexContext.commit('setToken', token)
+            Cookie.set('token', token)
+            Cookie.set('expirationDate', expirationDate)
+            localStorage.setItem('token', token)
+            localStorage.setItem('expirationDate', expirationDate)
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      },
+      initAuth(vuexContext, req) {
+        let token
+        let expirationDate
+        if (req) {
+          // isServer -> get token from Cookie
+          if (!req.headers.cookie) {
+            return
+          }
+          const jwtCookie = req.headers.cookie
+            .split(';')
+            .find(c => c.trim().startsWith('token='))
+          if (!jwtCookie) {
+            return
+          }
+          token = jwtCookie.split('=')[1]
+
+          expirationDate = req.headers.cookie
+            .split(';')
+            .find(c => c.trim().startsWith('expirationDate='))
+            .split('=')[1]
+        } else {
+          // isClient -> get token from localStorage
+          token = localStorage.getItem('token')
+          expirationDate = localStorage.getItem('expirationDate')
+        }
+
+        if (new Date().getTime() > Number.parseInt(expirationDate) || !token) {
+          // No or invalid token
+          vuexContext.dispatch('logout')
+          return
+        }
+        vuexContext.commit('setToken', token)
+      },
+      logout(vuexContext) {
+        vuexContext.commit('clearToken')
+        Cookie.remove('token')
+        Cookie.remove('expirationDate')
+        if (process.client) {
+          localStorage.removeItem('token')
+          localStorage.removeItem('expirationDate')
+        }
       }
     },
     getters: {
       loadedPosts(state) {
         return state.loadedPosts
+      },
+      isAuthenticated(state) {
+        return state.token != null
       }
     }
   })

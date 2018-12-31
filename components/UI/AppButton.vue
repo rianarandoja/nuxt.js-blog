@@ -60,4 +60,18 @@ export default {
   border: 1px solid transparent;
   color: black;
 }
+
+.small {
+  background-color: white;
+  color: $dark-admin;
+  padding: 0px 5px 0px 5px;
+  border: 1px solid transparent;
+}
+
+.small:hover,
+.small:active {
+  color: #c5c5c5;
+  background-color: white;
+  border: 1px solid transparent;
+}
 </style>

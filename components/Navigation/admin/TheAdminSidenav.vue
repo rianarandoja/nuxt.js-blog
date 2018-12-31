@@ -11,8 +11,15 @@
         <ul
           class="nav-list"
           @click="$emit('close')">
-          <li class="nav-item"><nuxt-link to="/admin/new-post">New Post</nuxt-link></li>
+          <li 
+            v-if="loggedIn" 
+            class="nav-item"><nuxt-link to="/admin/new-post">New Post</nuxt-link></li>
           <li class="nav-item"><nuxt-link to="/">Client</nuxt-link></li>
+          <li 
+            v-if="loggedIn" 
+            class="nav-item"><AppButton 
+              btn-style="small" 
+              @click="onLogout">Logout</AppButton></li>
         </ul>
       </div>
     </transition>
@@ -26,6 +33,17 @@ export default {
     show: {
       type: Boolean,
       default: false
+    }
+  },
+  computed: {
+    loggedIn() {
+      return this.$store.getters.isAuthenticated
+    }
+  },
+  methods: {
+    onLogout() {
+      this.$store.dispatch('logout')
+      this.$router.push('/admin/auth')
     }
   }
 }

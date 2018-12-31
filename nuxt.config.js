@@ -50,6 +50,10 @@ module.exports = {
     credentials: false
   },
 
+  env: {
+    firebase_API_KEY: 'API_KEY_IS_SECRET'
+  },
+
   /*
   ** Build configuration
   */
