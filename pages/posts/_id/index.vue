@@ -25,6 +25,9 @@ export default {
         }
       })
       .catch(err => context.error(err))
+  },
+  head: {
+    title: 'Nuxt.js - Post'
   }
 }
 </script>

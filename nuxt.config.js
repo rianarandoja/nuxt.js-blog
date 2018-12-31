@@ -2,12 +2,14 @@ const pkg = require('./package')
 
 module.exports = {
   mode: 'universal',
+  // Server side pre-rendering
+  // Alternative: spa
 
   /*
   ** Headers of the page
   */
   head: {
-    title: pkg.name,
+    title: 'Nuxt.js - Blog',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
