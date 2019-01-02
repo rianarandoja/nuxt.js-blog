@@ -96,6 +96,18 @@ const createStore = () => {
             Cookie.set('expirationDate', expirationDate)
             localStorage.setItem('token', token)
             localStorage.setItem('expirationDate', expirationDate)
+
+            this.$axios
+              .$post('http://127.0.0.1:5000/api/track-data', {
+                data: 'Authenticated'
+              })
+              .then(result => console.log(result))
+              .catch(error => console.log(error))
+
+            this.$axios
+              .$get('http://127.0.0.1:5000/api/data')
+              .then(result => console.log(result))
+              .catch(error => console.log(error))
           })
           .catch(err => {
             console.log(err)
