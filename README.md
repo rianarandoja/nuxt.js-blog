@@ -2,6 +2,8 @@
 
 > My groundbreaking Nuxt.js project
 
+> [Nuxt.js - Vue.js on Steroids](https://www.udemy.com/nuxtjs-vuejs-on-steroids/)
+
 ## Build Setup
 
 ```bash
