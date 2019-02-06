@@ -154,6 +154,11 @@ const createStore = () => {
           localStorage.removeItem('token')
           localStorage.removeItem('expirationDate')
         }
+
+        this.$axios
+          .$get('http://127.0.0.1:5000/api/users')
+          .then(result => console.log(result))
+          .catch(error => console.log(error))
       }
     },
     getters: {
